@@ -87,10 +87,14 @@ public final class RVMArray extends RVMType {
     JavaLangObjectArray = (RVMArray) TypeReference.JavaLangObjectArray.resolve();
   }
   /**
-   * to analyze the number of different types of array
+   * to analyze the number of different types of array.
    */
   private static int referenceArray = 0;
   private static int primitiveArray = 0;
+  /**
+   * count the number of getInstanceSize() methods used in array.
+   */
+  private static int count_getinssize = 0;
   /**
    * The RVMType object for elements of this array type.
    */
@@ -242,6 +246,8 @@ public final class RVMArray extends RVMType {
   @Pure
   @Uninterruptible
   public int getInstanceSize(int numelts) {
+    count_getinssize++;
+    VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
     return ObjectModel.computeArrayHeaderSize(this) + (numelts << getLogElementSize());
   }
 

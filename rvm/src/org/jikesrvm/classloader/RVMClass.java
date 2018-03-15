@@ -82,7 +82,10 @@ public final class RVMClass extends RVMType {
   private static int interfacenum = 0;
   private static int isdeclarednum = 0;
   private static int isscalarnum = 0;
-
+  /**
+   * count the number of getInstanceSize() methods used in array.
+   */
+  private static int count_getinssize = 0;
   /**
    * The constant pool holds constants used by the class and the Java
    * bytecodes in the methods associated with this class. This
@@ -833,6 +836,8 @@ public final class RVMClass extends RVMType {
    */
   @Uninterruptible
   public int getInstanceSize() {
+    count_getinssize++;
+    VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
     if (VM.VerifyAssertions) VM._assert(isResolved());
     return instanceSize;
   }
