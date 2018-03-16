@@ -246,8 +246,8 @@ public final class RVMArray extends RVMType {
   @Pure
   @Uninterruptible
   public int getInstanceSize(int numelts) {
-    count_getinssize++;
-    VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
+    //count_getinssize++;
+    //VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
     return ObjectModel.computeArrayHeaderSize(this) + (numelts << getLogElementSize());
   }
 

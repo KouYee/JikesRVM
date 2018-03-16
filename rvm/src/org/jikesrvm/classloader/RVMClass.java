@@ -836,8 +836,8 @@ public final class RVMClass extends RVMType {
    */
   @Uninterruptible
   public int getInstanceSize() {
-    count_getinssize++;
-    VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
+    //count_getinssize++;
+    //VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
     if (VM.VerifyAssertions) VM._assert(isResolved());
     return instanceSize;
   }
