@@ -246,8 +246,6 @@ public final class RVMArray extends RVMType {
   @Pure
   @Uninterruptible
   public int getInstanceSize(int numelts) {
-    //count_getinssize++;
-    //VM.sysWriteln("getInstanceSize() in array: " + count_getinssize + "times");
     return ObjectModel.computeArrayHeaderSize(this) + (numelts << getLogElementSize());
   }
 
@@ -490,12 +488,20 @@ public final class RVMArray extends RVMType {
 
       int alignCode = elementType.isReferenceType() ? HandInlinedScanning.referenceArray() : HandInlinedScanning.primitiveArray();
       TIB allocatedTib = MemoryManager.newTIB(javaLangObjectTIB.numVirtualMethods(), alignCode);
-      if(elementType.isReferenceType()){
+      /*if(elementType.isReferenceType()){
         referenceArray++;
         VM.sysWriteln("Above is referenceArray number: "+referenceArray);
       }else {
         primitiveArray++;
         VM.sysWriteln("Above is primitiveArray number: "+primitiveArray);
+      }*/
+      if(isArrayType()) {
+        VM.sysWriteln(count_tib + "," +
+                (isArrayType() ? "1" : "0") + "," +
+                getInstanceSize(getDimensionality()) + "," +
+                 "," /*+
+                (hasFinalizer() ? "1" : "0")*/
+        );
       }
       superclassIds = DynamicTypeCheck.buildSuperclassIds(this);
       doesImplement = DynamicTypeCheck.buildDoesImplement(this);

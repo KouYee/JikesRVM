@@ -102,7 +102,7 @@ public class AlignmentEncoding {
       return region;
     // Now fake the region address to encode our data
     final Address limit = region.plus(padding(alignCode));
-    if (VERBOSE) {
+    if (!VERBOSE) {
       VM.sysWrite("Allocating TIB: region = ",region," tib code = ",getTibCodeForRegion(region));
       VM.sysWriteln(", requested = ",alignCode);
     }
@@ -119,7 +119,7 @@ public class AlignmentEncoding {
         VM.sysFail("Tib alignment fail");
       }
     }
-    if (VERBOSE) {
+    if (!VERBOSE) {
       VM.sysWrite("           TIB: region = ",region," tib code = ",getTibCodeForRegion(region));
       VM.sysWriteln(", requested = ",alignCode);
     }

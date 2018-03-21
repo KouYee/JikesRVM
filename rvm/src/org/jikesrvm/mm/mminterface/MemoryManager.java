@@ -877,8 +877,8 @@ public final class MemoryManager {
 
     /* Now we replace the TIB */
     ObjectModel.setTIB(result, realTib);
-    count++;
-    VM.sysWriteln("TIB: "+count +" Method: "+numVirtualMethods+ " Alignment: "+ alignCode + " Size: "+size);
+    //count++;
+    //VM.sysWriteln("TIB: "+count +" Method: "+numVirtualMethods+ " Alignment: "+ alignCode + " Size: "+size);
 
     return (TIB)result;
   }

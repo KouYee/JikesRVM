@@ -67,6 +67,7 @@ public abstract class RVMType extends AnnotatedElement {
      */
     public static int num_instance_class = 0;
     public static int num_instance_array = 0;
+    public static int count_tib = 0;
 
   /**
    * A zero-length array, used as GC metadata for primitive
@@ -254,13 +255,13 @@ public abstract class RVMType extends AnnotatedElement {
     this.classForType = classForType;
     this.dimension = dimension;
 
-    if(isClassType()){
+    /*if(isClassType()){
         num_instance_class++;
         VM.sysWriteln("The " +  num_instance_class + " Class!");
     }else if (isArrayType()) {
         num_instance_array++;
         VM.sysWriteln("The " +  num_instance_array + " Array!");
-    }
+    }*/
 
     /* install partial type information block (no method dispatch table) for use in type checking. */
     TIB tib = MemoryManager.newTIB(0, AlignmentEncoding.ALIGN_CODE_NONE);
@@ -285,11 +286,14 @@ public abstract class RVMType extends AnnotatedElement {
 
       if(isClassType()){
           num_instance_class++;
-          VM.sysWriteln("The " +  num_instance_class + " Class!");
+          count_tib++;
+          //VM.sysWriteln(count_tib + ":" + "The " +  num_instance_class + " Class!");
       }else if (isArrayType()) {
           num_instance_array++;
-          VM.sysWriteln("The " +  num_instance_array + " Array!");
+          count_tib++;
+          //VM.sysWriteln(count_tib + ":" + "The " +  num_instance_array + " Array!");
       }
+
     /* install partial type information block (no method dispatch table) for use in type checking. */
     TIB tib = MemoryManager.newTIB(0, AlignmentEncoding.ALIGN_CODE_NONE);
     tib.setType(this);
