@@ -499,8 +499,10 @@ public final class RVMArray extends RVMType {
         VM.sysWriteln(count_tib + "," +
                 (isArrayType() ? "1" : "0") + "," +
                 getInstanceSize(getDimensionality()) + "," +
-                 "," /*+
-                (hasFinalizer() ? "1" : "0")*/
+                "," +
+                "0" + "," +
+                getLogElementSize() + "," /*+
+                alignment*/
         );
       }
       superclassIds = DynamicTypeCheck.buildSuperclassIds(this);
