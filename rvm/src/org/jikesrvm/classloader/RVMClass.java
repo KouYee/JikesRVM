@@ -1361,8 +1361,10 @@ public final class RVMClass extends RVMType {
       VM.sysWriteln(count_tib + "," +
               (isArrayType() ? "1" : "0") + "," +
               instanceSize + "," +
-               "," /*+
-              (hasFinalizer() ? "1" : "0")*/
+              + getOriginalModifiers() +  "," +
+              (!hasFinalizer ? "0" : "1") + "," +
+              "," +
+              alignment
       );
     }
     superclassIds = DynamicTypeCheck.buildSuperclassIds(this);
