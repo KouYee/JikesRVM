@@ -17,6 +17,7 @@ import static org.jikesrvm.HeapLayoutConstants.BOOT_IMAGE_CODE_SIZE;
 import static org.jikesrvm.HeapLayoutConstants.BOOT_IMAGE_CODE_START;
 import static org.jikesrvm.HeapLayoutConstants.BOOT_IMAGE_DATA_SIZE;
 import static org.jikesrvm.HeapLayoutConstants.BOOT_IMAGE_DATA_START;
+import static org.jikesrvm.classloader.RVMType.count_tib;
 import static org.jikesrvm.objectmodel.TIBLayoutConstants.IMT_METHOD_SLOTS;
 import static org.jikesrvm.runtime.ExitStatus.EXIT_STATUS_BOGUS_COMMAND_LINE_ARG;
 import static org.mmtk.utility.Constants.MIN_ALIGNMENT;
@@ -95,6 +96,8 @@ public final class MemoryManager {
    */
   private static boolean booted = false;
   private static int count=0;
+  public static int scalar_count = 0;
+  public static int array_count = 0;
   /**
    * Has garbage collection been enabled yet?
    */
@@ -104,7 +107,10 @@ public final class MemoryManager {
    *
    * Initialization
    */
-
+  /**
+   * note down tib size
+   */
+  public static int tibsize = 0;
   /**
    * Suppress default constructor to enforce noninstantiability.
    */
@@ -501,6 +507,12 @@ public final class MemoryManager {
     Address region = allocateSpace(mutator, size, align, offset, allocator, site);
     Object result = ObjectModel.initializeScalar(region, tib, size);
     mutator.postAlloc(ObjectReference.fromObject(result), ObjectReference.fromObject(tib), size, allocator);
+    scalar_count ++;
+    /**
+     * Print out to summarize the number of objects each TIB has for class type
+     */
+    int count = tib.getType().getTIBNum();
+    VM.sysWriteln(count);
     return result;
   }
 
@@ -530,6 +542,13 @@ public final class MemoryManager {
       throwLargeArrayOutOfMemoryError();
     }
     int size = elemBytes + headerSize;
+
+    /**
+     * Print out to summarize the number of objects each TIB has for array type
+     */
+    int count_array = tib.getType().getTIBNum();
+    VM.sysWriteln(count_array);
+
     return allocateArrayInternal(numElements, size, tib, allocator, align, offset, site);
   }
 
@@ -567,6 +586,7 @@ public final class MemoryManager {
     Address region = allocateSpace(mutator, size, align, offset, allocator, site);
     Object result = ObjectModel.initializeArray(region, tib, numElements, size);
     mutator.postAlloc(ObjectReference.fromObject(result), ObjectReference.fromObject(tib), size, allocator);
+    array_count ++;
     return result;
   }
 
@@ -867,6 +887,7 @@ public final class MemoryManager {
       throwLargeArrayOutOfMemoryError();
     }
     int size = elemBytes + headerSize + AlignmentEncoding.padding(alignCode);
+    tibsize = size;
     Selected.Mutator mutator = Selected.Mutator.get();
     Address region = allocateSpace(mutator, size, align, offset, type.getMMAllocator(), Plan.DEFAULT_SITE);
 
@@ -877,8 +898,6 @@ public final class MemoryManager {
 
     /* Now we replace the TIB */
     ObjectModel.setTIB(result, realTib);
-    //count++;
-    //VM.sysWriteln("TIB: "+count +" Method: "+numVirtualMethods+ " Alignment: "+ alignCode + " Size: "+size);
 
     return (TIB)result;
   }

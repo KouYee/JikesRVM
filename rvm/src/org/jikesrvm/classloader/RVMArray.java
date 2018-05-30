@@ -47,6 +47,7 @@ import org.vmmagic.pragma.NonMoving;
 import org.vmmagic.pragma.Pure;
 import org.vmmagic.pragma.Uninterruptible;
 import org.vmmagic.unboxed.Offset;
+import org.jikesrvm.mm.mminterface.MemoryManager;
 
 /**
  * Description of a java "array" type. <p>
@@ -488,28 +489,26 @@ public final class RVMArray extends RVMType {
 
       int alignCode = elementType.isReferenceType() ? HandInlinedScanning.referenceArray() : HandInlinedScanning.primitiveArray();
       TIB allocatedTib = MemoryManager.newTIB(javaLangObjectTIB.numVirtualMethods(), alignCode);
-      /*if(elementType.isReferenceType()){
-        referenceArray++;
-        VM.sysWriteln("Above is referenceArray number: "+referenceArray);
-      }else {
-        primitiveArray++;
-        VM.sysWriteln("Above is primitiveArray number: "+primitiveArray);
-      }*/
-      if(isArrayType()) {
-        VM.sysWriteln(count_tib + "," +
-                (isArrayType() ? "1" : "0") + "," +
-                getInstanceSize(getDimensionality()) + "," +
-                "," +
-                "0" + "," +
-                getLogElementSize() + "," /*+
-                alignment*/
-        );
-      }
+
       superclassIds = DynamicTypeCheck.buildSuperclassIds(this);
       doesImplement = DynamicTypeCheck.buildDoesImplement(this);
       publishResolved(allocatedTib, superclassIds, doesImplement);
 
       MemoryManager.notifyClassResolved(this);
+        /**
+         * first print out tib info for array type
+         */
+        /*if(isArrayType()) {
+            VM.sysWriteln(count_tib + "," +
+                    (isArrayType() ? "1" : "0") + "," +
+                    getInstanceSize(getDimensionality()) + "," +
+                    "," +
+                    "0" + "," +
+                    getLogElementSize() + "," +
+                    "," +
+                    dimension
+            );
+        }*/
     }
   }
 
@@ -525,6 +524,7 @@ public final class RVMArray extends RVMType {
   private void publishResolved(TIB allocatedTib, short[] superclassIds, int[] doesImplement) {
     Statics.setSlotContents(getTibOffset(), allocatedTib);
     allocatedTib.setType(this);
+    //this.setTIBNum(count_tib);
     allocatedTib.setSuperclassIds(superclassIds);
     allocatedTib.setDoesImplement(doesImplement);
     if (!(elementType.isPrimitiveType() || elementType.isUnboxedType())) {

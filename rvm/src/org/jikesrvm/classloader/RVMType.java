@@ -241,6 +241,11 @@ public abstract class RVMType extends AnnotatedElement {
   protected int[] doesImplement;
 
   /**
+   * count number of each type
+   */
+  public int TIBNum ;
+
+  /**
    * Create an instance of a {@link RVMType}
    * @param typeRef The canonical type reference for this type.
    * @param classForType The java.lang.Class representation
@@ -268,6 +273,31 @@ public abstract class RVMType extends AnnotatedElement {
     tib.setType(this);
     Statics.setSlotContents(getTibOffset(), tib);
 
+    if(isClassType()){
+      count_tib++;
+      /*RVMClass classtype = (RVMClass) tib.getType();
+      VM.sysWriteln(count_tib + "," +
+              (classtype.isArrayType() ? "1" : "0") + "," +
+              classtype.getInstanceSize() + "," +
+              + classtype.getOriginalModifiers() +  "," +
+              (!classtype.hasFinalizer() ? "0" : "1") + "," +
+              "," +
+              classtype.getAlignment() +
+              ","
+      );*/
+    }else if (isArrayType()) {
+      count_tib++;
+      /*RVMArray arraytype = (RVMArray) tib.getType();
+      VM.sysWriteln(count_tib + "," +
+              (arraytype.isArrayType() ? "1" : "0") + "," +
+              arraytype.getInstanceSize(arraytype.getDimensionality()) + "," +
+              "," +
+              "0" + "," +
+              arraytype.getLogElementSize() + "," +
+              "," +
+              arraytype.getDimensionality()
+      );*/
+    }
   }
 
   /**
@@ -284,20 +314,40 @@ public abstract class RVMType extends AnnotatedElement {
     this.classForType = createClassForType(this, typeRef);
     this.dimension = dimension;
 
-      if(isClassType()){
-          num_instance_class++;
-          count_tib++;
-          //VM.sysWriteln(count_tib + ":" + "The " +  num_instance_class + " Class!");
-      }else if (isArrayType()) {
-          num_instance_array++;
-          count_tib++;
-          //VM.sysWriteln(count_tib + ":" + "The " +  num_instance_array + " Array!");
-      }
+
 
     /* install partial type information block (no method dispatch table) for use in type checking. */
     TIB tib = MemoryManager.newTIB(0, AlignmentEncoding.ALIGN_CODE_NONE);
     tib.setType(this);
     Statics.setSlotContents(getTibOffset(), tib);
+
+    if(isClassType()){
+      count_tib++;
+      /*RVMClass classtype = (RVMClass) tib.getType();
+      VM.sysWriteln(count_tib + "," +
+              (classtype.isArrayType() ? "1" : "0") + "," +
+              classtype.getInstanceSize() + "," +
+              + classtype.getOriginalModifiers() +  "," +
+              (!classtype.hasFinalizer() ? "0" : "1") + "," +
+              "," +
+              classtype.getAlignment() +
+              ","
+      );*/
+    }else if (isArrayType()) {
+      count_tib++;
+      /*RVMArray arraytype = (RVMArray) tib.getType();
+      VM.sysWriteln(count_tib + "," +
+              (arraytype.isArrayType() ? "1" : "0") + "," +
+              arraytype.getInstanceSize(arraytype.getDimensionality()) + "," +
+              "," +
+              "0" + "," +
+              arraytype.getLogElementSize() + "," +
+              "," +
+              arraytype.getDimensionality()
+      );*/
+    }
+
+    this.setTIBNum(count_tib);
   }
 
   /**
@@ -959,5 +1009,17 @@ public abstract class RVMType extends AnnotatedElement {
   public int[] getReferenceOffsets() {
     if (VM.VerifyAssertions) VM._assert(isResolved());
     return referenceOffsets;
+  }
+
+  /**
+   * To implement the object number
+   */
+  @Uninterruptible
+  public void setTIBNum(int TIBNum){
+    this.TIBNum = TIBNum;
+  }
+  @Uninterruptible
+  public int getTIBNum(){
+    return TIBNum;
   }
 }

@@ -1346,27 +1346,13 @@ public final class RVMClass extends RVMType {
     TIB allocatedTib;
     if (isInterface()) {
       allocatedTib = MemoryManager.newTIB(0, AlignmentEncoding.ALIGN_CODE_NONE);
-      //interfacenum++;
-      //VM.sysWriteln(interfacenum+" interfaceClass!");
     } else if (isAnnotationDeclared(TypeReference.ReferenceFieldsVary)) {
       allocatedTib = MemoryManager.newTIB(virtualMethods.length, HandInlinedScanning.fallback());
-      //isdeclarednum++;
-      //VM.sysWriteln(isdeclarednum+" annotationdeclaredClass!");
     } else {
       allocatedTib = MemoryManager.newTIB(virtualMethods.length, HandInlinedScanning.scalar(referenceOffsets));
-      //isscalarnum++;
-      //VM.sysWriteln(isscalarnum+" scalarClass!");
     }
-    if(isClassType()){
-      VM.sysWriteln(count_tib + "," +
-              (isArrayType() ? "1" : "0") + "," +
-              instanceSize + "," +
-              + getOriginalModifiers() +  "," +
-              (!hasFinalizer ? "0" : "1") + "," +
-              "," +
-              alignment
-      );
-    }
+
+
     superclassIds = DynamicTypeCheck.buildSuperclassIds(this);
     doesImplement = DynamicTypeCheck.buildDoesImplement(this);
 
@@ -1395,6 +1381,20 @@ public final class RVMClass extends RVMType {
     }
 
     if (VM.TraceClassLoading && VM.runningVM) VM.sysWriteln("RVMClass: (end)   resolve " + this);
+    /**
+     * first print out tib info for class type
+     */
+    /*if(isClassType()){
+      VM.sysWriteln(count_tib + "," +
+              (isArrayType() ? "1" : "0") + "," +
+              instanceSize + "," +
+              + getOriginalModifiers() +  "," +
+              (!hasFinalizer ? "0" : "1") + "," +
+              "," +
+              alignment +
+              ","
+      );
+    }*/
   }
 
   /**
@@ -1409,6 +1409,7 @@ public final class RVMClass extends RVMType {
   private void publishResolved(TIB allocatedTib, short[] superclassIds, int[] doesImplement) {
     Statics.setSlotContents(getTibOffset(), allocatedTib);
     allocatedTib.setType(this);
+    //this.setTIBNum(count_tib);
     allocatedTib.setSuperclassIds(superclassIds);
     allocatedTib.setDoesImplement(doesImplement);
     typeInformationBlock = allocatedTib;
